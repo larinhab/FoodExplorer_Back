@@ -1,5 +1,6 @@
 const AppError = require("../utilis/AppError")
 const knex = require("../database/knex")
+
 const { hash, compare } = require("bcryptjs")
 
 class UsersController {
