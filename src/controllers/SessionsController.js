@@ -1,8 +1,9 @@
-const knex = require("../database/knex")
 const AppError = require("../utilis/AppError")
 const authConfig = require("../config/auth")
-const { compare } = require("bcryptjs")
+const knex = require("../database/knex")
+
 const { sign } = require("jsonwebtoken")
+const { compare } = require("bcryptjs")
 
 class SessionsController {
     async create(request, response){
@@ -25,7 +26,7 @@ class SessionsController {
             expiresIn
         })
 
-        return response.json({
+        return response.status(200).json({
             user,
             token,
             message: "Sessão iniciada"
