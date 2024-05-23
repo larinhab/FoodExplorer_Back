@@ -5,6 +5,14 @@ class PlatesController {
     async create(request, response){
         const { name, category, price, description } = request.body
 
+        if(!name || !category || !price || !description){
+            throw new AppError("Todos os campos devem ser preenchidos.")
+        }
+
+        if(price.length < 1 ){
+            throw new AppError("O preço deve ser maior que R$0")
+        }
+
         const [plate_id] = await knex("plates").insert({
             name,
             category,

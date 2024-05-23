@@ -10,8 +10,8 @@ class UsersController {
         const cryptPassword = await hash(password, 8)
         const checkIfEmailExist = await knex("users").where({ email }).first()
 
-        if (checkIfEmailExist){
-            throw new AppError("E-mail já em uso", 400)
+        if(checkIfEmailExist){
+            throw new AppError("E-mail já cadastrado", 400)
         }
 
         await knex("users").insert({
@@ -20,9 +20,9 @@ class UsersController {
             password: cryptPassword
         })
 
-        return response.json({
+        return response.status(201).json({
             message: "Usuário criado com sucesso!"
-        }, 201)
+        })
     }
 
     async uptade(request, response){
