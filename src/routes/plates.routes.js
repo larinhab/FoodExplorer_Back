@@ -1,17 +1,20 @@
 const { Router } = require("express")
 
 const ensureAuth = require("../middlewares/ensureAuth")
+const roleAuth = require("../middlewares/roleAuth")
 const PlatesController = require("../controllers/PlatesController")
 
 const platesRoutes = Router()
 
 const platesController = new PlatesController()
 
-platesRoutes.post("/", platesController.create) // ADMIN
-platesRoutes.put("/:id", platesController.uptade) // ADMIN 
-platesRoutes.delete("/:id", platesController.delete) // ADMIN
+platesRoutes.use(ensureAuth)
 
-platesRoutes.get("/", platesController.index) // USUÁRIOS
-platesRoutes.get("/:id", platesController.show) // USUÁRIOS
+platesRoutes.post("/", roleAuth("admin"), platesController.create)
+platesRoutes.put("/:id", roleAuth("admin"), platesController.uptade)
+platesRoutes.delete("/:id", roleAuth("admin"), platesController.delete)
+
+platesRoutes.get("/", platesController.index)
+platesRoutes.get("/:id", platesController.show)
 
 module.exports = platesRoutes

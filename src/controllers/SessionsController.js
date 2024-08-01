@@ -10,18 +10,19 @@ class SessionsController {
         const { email, password } = request.body
 
         const user = await knex("users").where({ email }).first()
-        const passwordValid = await compare(password, user.password)
-
+        
         if(!user){
             throw new AppError("Usuário não encontrado", 401)
         }
-
+        
+        const passwordValid = await compare(password, user.password)
+        
         if(!passwordValid){
             throw new AppError("E-mail e/ou senha inválidos")
         }
 
         const { secret, expiresIn } = authConfig.jwt
-        const token = sign({}, secret, {
+        const token = sign({ role: user.role }, secret, {
             subject: String(user.id),
             expiresIn
         })
@@ -30,7 +31,7 @@ class SessionsController {
             user,
             token,
             message: "Sessão iniciada"
-        }, 201)
+        })
     }
 }
 

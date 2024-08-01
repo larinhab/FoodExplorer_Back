@@ -1,6 +1,7 @@
 const { Router } = require("express")
 
 const ensureAuth = require("../middlewares/ensureAuth")
+const roleAuth = require("../middlewares/roleAuth")
 const UsersController = require("../controllers/UsersController")
 
 const usersRoutes = Router()
@@ -9,6 +10,6 @@ const usersController = new UsersController()
 
 usersRoutes.post("/", usersController.create)
 usersRoutes.put("/", ensureAuth, usersController.uptade)
-usersRoutes.delete("/", ensureAuth, usersController.delete)
+usersRoutes.delete("/:id", ensureAuth, roleAuth("admin"), usersController.delete)
 
-module.exports = usersRoutes;
+module.exports = usersRoutes; 

@@ -1,7 +1,6 @@
-const AppError = require("../utils/AppError");
+const AppError = require("../utilis/AppError");
 
-
-function roleAuth(roleToVerify){
+function roleAuth( roleToVerify ) {
     return (request, response, next) => {
         const { role } = request.user;
 
@@ -10,9 +9,7 @@ function roleAuth(roleToVerify){
         } else {
             return next()
         }
-
-        return response.status(201)
     }   
 }
 
-module.exports = roleAuth
+module.exports = roleAuth;
