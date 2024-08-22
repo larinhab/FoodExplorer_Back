@@ -9,7 +9,7 @@ const usersRoutes = Router()
 const usersController = new UsersController()
 
 usersRoutes.post("/", usersController.create)
-usersRoutes.put("/", ensureAuth, usersController.uptade)
-usersRoutes.delete("/:id", ensureAuth, roleAuth("admin"), usersController.delete)
+usersRoutes.put("/:id", ensureAuth, usersController.uptade)
+usersRoutes.delete("/:id", ensureAuth, roleAuth("admin, user"), usersController.delete)
 
 module.exports = usersRoutes; 
