@@ -3,7 +3,7 @@ const path = require("path")
 const crypto = require("crypto")
 
 const TMP_FOLDER = path.resolve(__dirname, "..", "..", "tmp")
-const UPLOAD_FOLDER = path.resolve("TEMP_FOLDER", "uploads" )
+const UPLOAD_FOLDER = path.resolve(TMP_FOLDER, "upload" )
 
 const MULTER = {
     storage: multer.diskStorage({

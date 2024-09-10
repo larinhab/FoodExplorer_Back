@@ -17,7 +17,6 @@ class FavoritesController {
       return response.json({ message: "Este prato já está nos favoritos."})
     }else{
       await knex("favorites").insert({
-        state: true,
         user_id,
         plate_id
       });

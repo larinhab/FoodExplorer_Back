@@ -11,6 +11,6 @@ exports.up = knex => knex.schema.createTable("plates", table => {
     table.timestamp("updated_at").defaultTo(knex.fn.now())    
 });
 
-exports.down = knex => knex.schema.createTable("users", table => {
+exports.down = knex => knex.schema.createTable("plates", table => {
 
 });
