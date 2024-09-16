@@ -4,19 +4,23 @@ const DiskStorage = require("../providers/DiskStorage")
 
 class PlatesController {
     async create(request, response){
-        const { name, category, price, description } = request.body
-        const image = request.file.filename
-        const diskStorage = new DiskStorage()
-        const filename = await diskStorage.saveFile(image)
+        const { name, category, price, description, ingredients } = request.body
+        const image = request.file ? request.file.filename : null
 
         if(!name || !category || !price || !description){
             throw new AppError("Todos os campos devem ser preenchidos.")
         }
 
+        if(!image) {
+            throw new AppError("Imagem do prato é obrigatória")
+        }
+
+        const diskStorage = new DiskStorage()
+        const filename = await diskStorage.saveFile(image)
+
         if(price.length < 1 ){
             throw new AppError("O preço deve ser maior que R$0")
         }
-
 
         const [plate_id] = await knex("plates").insert({
             name,
@@ -26,13 +30,23 @@ class PlatesController {
             image: filename,
         })
 
+        const ingredientsArray = typeof ingredients === 'string' ? ingredients.split(',').map(item => item.trim()) : ingredients;
+
+        const ingredientsInsert = ingredientsArray.map((ingredient) => {
+            return{
+                plate_id,
+                name: ingredient
+            }
+        })
+            await knex("ingredients").insert(ingredientsInsert)
+
         return response.status(201).json({
             message: "Prato criado com sucesso!"
         })
     }
 
     async uptade(request, response){
-        const { name, category, price, description } = request.body
+        const { name, category, price, description, ingredients } = request.body
         const { id } = request.params
         const image = request.file?.filename
 
@@ -60,6 +74,18 @@ class PlatesController {
             plateUpdate.image = filename
         }
 
+        if(ingredients){
+            await knex("ingredients").where({ plate_id: id }).delete()
+            const ingredientsArray = typeof ingredients === 'string' ? ingredients.split(',').map(item => item.trim()) : ingredients;
+
+        const ingredientsInsert = ingredientsArray.map((ingredient) => {
+            return{
+                plate_id: id,
+                name: ingredient
+            }
+        })
+            await knex("ingredients").insert(ingredientsInsert)
+        }
         
         await knex("plates").where({ id })
         .update( plateUpdate );
@@ -83,13 +109,18 @@ class PlatesController {
         const { id } = request.params
 
         const plate = await knex("plates").where({ id }).first()
+        const ingredients = await knex("ingredients")
+        .select(["id", "name"])
+        .where({ plate_id: id})
+        .orderBy("name")
 
         if(!plate){
             throw new AppError("Prato não encontrado")
         }
 
         return response.status(201).json({
-            ...plate
+            ...plate,
+            ingredients
         })
     }
 
