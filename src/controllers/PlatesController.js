@@ -124,10 +124,39 @@ class PlatesController {
         })
     }
 
-    async index(request, response){
+    async index(request, response){    
+        const { search } = request.query
 
+        let allPlates = await knex("plates")
+        let allIngredients = await knex("ingredients")
+
+        if(search){
+            const keywords = search.split(" ").map((keyword) => `%${keyword}%`)
+            
+            allPlates = await knex("plates")
+            .where(function() {
+                keywords.forEach((keyword) => {
+                    this.orWhere('name', 'like', keyword)
+                })
+            })
+
+            allIngredients = await knex("ingredients")
+            .where(function() {
+                keywords.forEach((keyword) => {
+                    this.orWhere('name', 'like', keyword)
+                })
+            }).select('plate_id')
+        }
+
+        if (allIngredients.length > 0) {
+            const plateIngredientId = allIngredients.map(ingredient => ingredient.plate_id)
+            const plateWithIngredient = await knex("plates").whereIn('id', plateIngredientId)
+
+            allPlates = [...new Set([...allPlates, ...plateWithIngredient])]
+        }
+
+        return response.json({allPlates, allIngredients})
     }
-
 }
 
 module.exports = PlatesController;
