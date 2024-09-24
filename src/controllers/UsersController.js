@@ -53,12 +53,12 @@ class UsersController {
             if(password === oldPassword) {
                 throw new AppError("A senha nova deve ser diferente da antiga!")
             }
-
+            
+            user.password = await hash(password, 8)
             if(password && !oldPassword){
                 throw new AppError("Informe sua senha antiga!", 400)
             }
             
-            user.password = await hash(password, 8)
         }
 
         await knex("users").where({ id: user_id }).update({
