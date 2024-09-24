@@ -128,34 +128,59 @@ class PlatesController {
         const { search } = request.query
 
         let allPlates = await knex("plates")
-        let allIngredients = await knex("ingredients")
-
-        if(search){
-            const keywords = search.split(" ").map((keyword) => `%${keyword}%`)
+        .select([
+            "plates.id",
+            "plates.name",
+            "plates.description",
+            "plates.category",
+            "plates.price",
+            "plates.image",
+        ])
+        .orderBy("plates.name");
+    
+        let allIngredients = await knex("ingredients");
+    
+        if (search) {
+            const keywords = search.split(" ").map((keyword) => `%${keyword}%`);
             
             allPlates = await knex("plates")
-            .where(function() {
+            .select([
+                "plates.id",
+                "plates.name",
+                "plates.description",
+                "plates.category",
+                "plates.price",
+                "plates.image",
+            ])
+            .leftJoin("ingredients", "plates.id", "ingredients.plate_id")
+            .where(function () {
                 keywords.forEach((keyword) => {
-                    this.orWhere('name', 'like', keyword)
+                    this.orWhere("plates.name", "like", keyword)
+                        .orWhere("plates.description", "like", keyword)
+                        .orWhere("ingredients.name", "like", keyword)
                 })
             })
-
-            allIngredients = await knex("ingredients")
-            .where(function() {
-                keywords.forEach((keyword) => {
-                    this.orWhere('name', 'like', keyword)
-                })
-            }).select('plate_id')
+            .groupBy("plates.id")
+            .orderBy("plates.name");
         }
-
-        if (allIngredients.length > 0) {
-            const plateIngredientId = allIngredients.map(ingredient => ingredient.plate_id)
-            const plateWithIngredient = await knex("plates").whereIn('id', plateIngredientId)
-
-            allPlates = [...new Set([...allPlates, ...plateWithIngredient])]
-        }
-
-        return response.json({allPlates, allIngredients})
+    
+        const ingredientsByPlateId = {} 
+        allIngredients.forEach(ingredient => {
+            const { plate_id } = ingredient;
+            if (!ingredientsByPlateId[plate_id]) {
+                ingredientsByPlateId[plate_id] = []
+            }
+            ingredientsByPlateId[plate_id].push(ingredient)
+        });
+    
+        const plateWithIngredients = allPlates.map(plate => {
+            return {
+                ...plate,
+                ingredients: ingredientsByPlateId[plate.id] || [],
+            };
+        });
+    
+        return response.json(plateWithIngredients);
     }
 }
 
