@@ -3,12 +3,14 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
+    "start": "pm2-runtime start ecosystem.config.js --env production",
     "test": "jest",
-    "dev": "./src/server.js"
+    "dev": "nodemon ./src/server.js",
+    "migrate": "knex migrate:latest"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Lara Barbosa Viana",
+  "license": "MIT",
   "description": "",
   "dependencies": {
     "axios": "^1.7.2",
@@ -20,6 +22,7 @@
     "jsonwebtoken": "^9.0.2",
     "knex": "^3.1.0",
     "multer": "^1.4.5-lts.1",
+    "pm2": "^5.4.2",
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
