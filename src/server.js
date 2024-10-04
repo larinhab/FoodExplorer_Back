@@ -10,7 +10,11 @@ app.use(express.json()) // PADRÃO DAS REQUISIÇÕES
 const uploadConfig = require("./config/upload.js")
 
 const routes = require("./routes") 
-app.use(cors()) // COMPARTILHAMENTO DE RECURSOS
+app.use(cors({
+    origin: true,
+    credentials: true,
+    })
+) // COMPARTILHAMENTO DE RECURSOS
 app.use(routes)
 app.use("/files", express.static(uploadConfig.UPLOAD_FOLDER))
 
