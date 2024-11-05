@@ -1,9 +1,9 @@
 <p align="center">
-  <img alt="Cliente Home" src="./src/assets/outras/home_Cliente.png" width="100%">
+  <img alt="Cliente Home" src="./src/utilis/home_Cliente.png" width="100%">
 </p>
 
 <p align="center">
-  <img alt="Admin Home" src="./src/assets/outras/home_Admin.png" width="100%">
+  <img alt="Admin Home" src="./src/utilis/home_Admin.png" width="100%">
 </p>
 
 O FoodExplorer é uma aplicação fullstack, utilizando as tecnologias aprendidas durante o curso Explorer, simulando um restaurante fictício de acordo com o layout disponibilizado no Figma.
