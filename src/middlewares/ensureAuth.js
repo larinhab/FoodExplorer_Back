@@ -21,7 +21,7 @@ function ensureAuth(
   }
 
   const [, token] =
-    authHeader.split("token=");
+    authHeader.cookie.split("token=");
 
   try {
     const { role, sub: user_id } =
